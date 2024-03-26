@@ -16,6 +16,7 @@ import csv
 import math
 
 
+
 """this program gives the regime of the particle x, 1 for brownian, 2 for superdiffusive and 3 for subdiffusive"""
 def typee(z):
     """
@@ -240,6 +241,9 @@ def proctotal(T,M,d, Delta, generatesituation, move, beta, delta, tau, alpha, bi
     cptmorts=0
     trackmort=[]
     tracknaissance=[]
+    nouveaux=[]
+    avtnouveaux=[]
+    tpsnouveaux=[]
     while t<T :
         print(t)
         k=1
@@ -294,6 +298,9 @@ def proctotal(T,M,d, Delta, generatesituation, move, beta, delta, tau, alpha, bi
                             cptnrsb+=1
                         else :
                             cptnrsp+=1
+                    avtnouveaux+=[res[i-1,:]]
+                    nouveaux+=[[X,Y,R,C]]
+                    tpsnouveaux+=[Tj]
                     newY=np.concatenate((res[i-1,:],np.array([X,Y,R,C])))
                     track+=[track[-1]+[cpttrack+1]]
                     cpttrack+=1
@@ -327,7 +334,7 @@ def proctotal(T,M,d, Delta, generatesituation, move, beta, delta, tau, alpha, bi
                 r=newY[2::4]
                 c=newY[3::4]
     compteurs=[cptnaissances,cptmorts,cptnlb,cptnlsp,cptnlsb,cptnrb,cptnrsp,cptnrsb,cptmlb,cptmlsp,cptmlsb,cptmrb,cptmrsp,cptmrsb]
-    return(resfinal,TpsSauts,tabecarts,track,compteurs,tracknaissance, trackmort)    
+    return(resfinal,TpsSauts,tabecarts,track,compteurs,tracknaissance, trackmort, nouveaux, avtnouveaux, tpsnouveaux)    
 
 
 

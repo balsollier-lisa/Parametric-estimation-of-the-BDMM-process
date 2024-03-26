@@ -585,19 +585,20 @@ plot_confidence_ellipse([pmax, smax],invcov,0.95,ax,edgecolor='black', fill=0)
 
 
 
-#pto run 50 simulations and plot the argmax on a plane as well as the median confidence ellipse 
+#to run 50 simulations and plot the argmax on a plane as well as the mean confidence ellipse 
 vectp, vects,matcovtot=simu(50)
-pmoy=np.median(vectp)
-smoy=np.median(vects)
-coeff1=np.median(matcovtot[:,0])
-coeff2=np.median(matcovtot[:,1])
-coeff3=np.median(matcovtot[:,2])
-medcov=np.array([[coeff1,coeff2],[coeff2,coeff3]])
+pmoy=np.mean(vectp)
+smoy=np.mean(vects)
+coeff1=np.mean(matcovtot[:,0])
+coeff2=np.mean(matcovtot[:,1])
+coeff3=np.mean(matcovtot[:,2])
+moycov=np.array([[coeff1,coeff2],[coeff2,coeff3]])
 fig, ax = plt.subplots()
 
-invmedcov=np.linalg.inv(medcov)
+invmoycov=np.linalg.inv(moycov)
+ax.set_title('Estimation results for '+r'$(p, log( \sigma)) = (0.4, 2.225)$'+' by MLE,\n based on 500 simulations and in red 95% Gaussian confidence ellipsoid')
 ax.scatter(vectp, vects, marker='x', color='royalblue')
 ax.scatter([pmoy],[smoy], marker='x', color='red')
-plot_confidence_ellipse([pmoy, smoy],invmedcov,0.95,ax,edgecolor='red', fill=0)
+plot_confidence_ellipse([pmoy, smoy],invmoycov,0.95,ax,edgecolor='red', fill=0)
 plt.show()      
        
