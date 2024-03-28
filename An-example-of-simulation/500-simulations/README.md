@@ -14,8 +14,8 @@ Theses simulations are generated with the parameters :
 
 - T=40 #final time of the simulation
 - n_init= 20 # number of particles at initial time
-- sigma=0.8 or log(sigma)=2.226 #parameter of variance in the birth kernel
-- p=0.4  #parameter that rules the uniform birth in the birth kernel
+- sigma=0.3 or log(sigma)=1.34 #parameter of variance in the birth kernel
+- p=0.2  #parameter that rules the uniform birth in the birth kernel
 
 In each sub-folder, you can find:
 
