@@ -15,7 +15,7 @@ This file was used to generate the simulations presented in the article.
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
-import pickle
+
 import scipy.optimize as op
 from matplotlib.patches import Ellipse
 
@@ -58,7 +58,7 @@ def generatesituation(M):
         vector that contains the ordinates of the points that form the configuration that will be returned.
     R : ARRAY
         vector that contains the type (0 for Langerin and 1 for Rab11 of the points that form the configuration that will be returned.
-    C : TYPE
+    C : ARRAY
         vector that contains the style of movement (1 for brownian, 2 for superdiffusive and 3 for confined) of the points that form the configuration that will be returned.
 
     """
@@ -82,6 +82,9 @@ def generatesituation(M):
         cpttrack=M
     return(X,Y,R,C,track,cpttrack)
 
+
+"""this program generates a browniane move with diffusion coefficient 
+s1lang or s1rab with as initial position the point (xi,yi,ri,ci)"""
 def brownianmove(xi,yi,ri,ci,ecarts,N,s1lang,s1rab):
     if ri==0 :
         normx=stats.norm.rvs(loc=0, scale=s1lang*np.sqrt(np.array(ecarts)))
@@ -263,7 +266,7 @@ def move(t,x,y,r,c,d) :
         vector that contains the ordinates of the points that form the initial condition.
     r : ARRAY
         vector that contains the type (0 for Langerin and 1 for Rab11 of the points that form the initial condition.
-    c : TYPE
+    c : ARRAY
         vector that contains the style of movement (1 for brownian, 2 for superdiffusive and 3 for confined) of the points that form the initial condition..
     d : FLOAT
         pace discretization of the motion.
@@ -323,7 +326,7 @@ def beta(x) :
     #return(4.45+2.98)#*n(x))
 
 
-"""death intensity : constant and equal to 10"""
+"""death intensity : proportional to the number of particle"""
 def delta(x): 
     if process.n(x)==1:
         return(0)
@@ -333,7 +336,7 @@ def delta(x):
         #return(0.15*process.nlb(x)+0.1*process.nlsp(x)+0.058*process.nlsb(x)+0.18*process.nrb(x)+0.22*process.nrsp(x)+0.07*process.nrsb(x))
     
     
-"""mutation intensity : equal to zero : no transition """
+"""mutation intensity : constant and equal to 16/167.86"""
 def tau(x) : 
     return(16/167.86)
     #return(0)
@@ -344,7 +347,7 @@ def alpha(x) :
 
 
 
-"""birth kernel : as in the section 5.1 of the article """
+"""birth kernel : as in the formula (20) section 4.1 of the article """
 def birthkernel(depart):
     """
     Parameters
@@ -432,7 +435,7 @@ def deathkernel(depart):
 
 
 
-"""transition kernel"""
+"""transition kernel : according a transition matrix"""
 def transitionkernel(depart): 
     """
     Parameters
