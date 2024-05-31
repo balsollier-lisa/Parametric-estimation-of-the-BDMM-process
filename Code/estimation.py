@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-@author: lisabalsollier
-"""
+Created on Fri May 31 17:26:21 2024
 
-"""
-You will find in this file all the necessary programs to plot the log likelihood 
-and the confidence ellipse of the real data.
-This file was used to generate Figure 3 presented in the article.
+@author: lisabalsollier
 """
 
 
@@ -18,110 +14,8 @@ import csv
 import scipy.optimize as op
 from matplotlib.patches import Ellipse
 
-
-
-"""we start with informations and a programme that are necessary for the rest of the process"""
-
-intertps=0.14
-Airecell=42525
-plbirth=(1/4.45)*np.array([3.59,0.47,0.39]) #proportions for the birth of brownian, superdiffusive, subdiffusive Langerin (in this order)
-
-
-with open('maskc.pickle', 'rb') as handle:
-    imgmod = pickle.load(handle) 
-
-"""this program allows to say if a point is in the cell"""
-def beincell(x):
-    if np.floor(x[0])<=0 or np.floor(x[0])+1>=250:
-        return(0)
-    if np.floor(x[1])<=0 or np.floor(x[1])+1>=283:
-        return(0)
-    if np.floor(x[0])+0.5<x[0]:
-        j=int(np.floor(x[0]))+1
-    else :
-        j=int(np.floor(x[0]))
-    if np.floor(x[1])+0.5<x[1]:
-        i=int(np.floor(x[1]))+1
-    else :
-        i=int(np.floor(x[1]))
-    return(int(imgmod[i][j][0]))
-
-
-"""the following lines are used to extract what we need from the files 
-containing the actual data (called data-Rab11.csv and data-Langerin.csv), 
-which must be in the same folder. """
- 
-def extract_real_data():
-    """
-    Parameters
-    ----------
-    None.
-
-    Returns
-    -------
-    drnx : LIST
-        list that contains the coordinates of the Langerin particles at the time of his birth
-    dravtnx : LIST
-        list that contains list of the coordinates of the Rab11 particles that are present at the time of the births of new Langerin particle
-    resfinalrab : LIST
-        list that contains at position i a list of the coordinates of the Rab11 particles that are present at the time i
-    """
-    
-    resfinalrab=[]
-    f=open ('data-Rab11.csv','r')
-    reader=csv.DictReader(f, delimiter=',')
-    nframe=np.max([int(row['t (frame)']) for row in reader])
-    for i in range(1,nframe+1):
-        f=open ('data-Rab11.csv','r')
-        reader=csv.DictReader(f, delimiter=',')
-        pts2=[]
-        for row in reader :
-            if int(row['t (frame)'])==i :
-                pts2+=[float(row['X (pixel)']), float(row['Y(pixel)']),1,int(row['Motion Type'])]
-        resfinalrab+=[pts2]
-    
-    
-    f=open ('data-Rab11.csv','r')
-    reader=csv.DictReader(f, delimiter=',')
-    nframe=np.max([int(row['t (frame)']) for row in reader])
-    drtpsnx=[]
-    drnx=[]
-    dravtnx=[]
-    dravtnx2=[]
-    for i in range(2,nframe+1):
-        vec1=[]
-        vec2=[]
-        fl=open ('data-Langerin.csv','r')
-        readerl=csv.DictReader(fl, delimiter=',')
-        for row in readerl:
-            if int(row['t (frame)'])==i:
-                vec2+=[ int(row['Track Number'])]
-            if int(row['t (frame)'])==i-1:
-                vec1+=[ int(row['Track Number'])]
-        naissancestraj=list(set(vec2)-(set(vec1)&set(vec2)))
-        print(naissancestraj)
-        if len(naissancestraj)!=0:
-            drtpsnx+=[(i-1)*intertps]*len(naissancestraj)
-            avtnxj=[]
-            avtnxj2=[]
-            f=open ('data-Rab11.csv','r')
-            reader=csv.DictReader(f, delimiter=',')
-            for row in reader :
-                if int(row['t (frame)'])==i :
-                    avtnxj+=[float(row['X (pixel)']), float(row['Y(pixel)']),1,int(row['Motion Type'])]
-                if int(row['t (frame)'])==i-1 :
-                    avtnxj2+=[float(row['X (pixel)']), float(row['Y(pixel)']),1,int(row['Motion Type'])]
-            dravtnx+=[avtnxj]*len(naissancestraj)
-            dravtnx2+=[avtnxj2]*len(naissancestraj)
-            for newtraj in naissancestraj :
-                fl=open ('data-Langerin.csv','r')
-                readerl=csv.DictReader(fl, delimiter=',')
-                for row in readerl :
-                    if int(row['Track Number'])==newtraj and int(row['t (frame)'])==i :
-                        drnx+=[[float(row['X (pixel)']), float(row['Y(pixel)']),0,int(row['Motion Type'])]]
-        return(drnx, dravtnx, resfinalrab)
-
-
+import simulation
+import heat_map_with_ellipse
 
 """this function calculates the log-likelihood as a function of the parameters sigma and p.
 To make the results easier to read, we have used a logarithmic scale for the sigma parameter."""
@@ -157,8 +51,7 @@ def logLplt(sigma,p,avtnx, nx):
             n+=np.exp(-v/(2*np.log(sigma)**2)) 
         #gs+=np.log((p*n)/((len(xx)//3)*(sigma**2)*2*np.pi)+(1-p)/Airecell)
         gs+=np.log((p*n)/((len(xx)//4)*(np.log(sigma)**2)*2*np.pi)+(1-p)/Airecell)
-    return(gs)        
-
+    return(gs)   
 
 
 """this program calculates the maximum likelihood argument"""
@@ -186,6 +79,28 @@ def maxvrs(avtnx, nx) :
     s=aa['x'][0]
     return([p,s])
 
+def maxvrssim(avtnx, nx) :
+    """
+    Parameters
+    ----------
+    avtnx : LIST
+        result of extract_real_data
+    nx : LIST
+        result of extract_real_data
+    
+    Returns
+    -------
+    [p,s] : LIST
+        list containing the argmax of the log-likelihood with p in first place and sigma in second place
+    """
+     
+    g=lambda inc:-logLplt(inc[0],inc[1],avtnx,nx)
+    #aa=op.minimize(g,[2,0.4],bounds=[(1.8, 3.5),(0.1,1)],method='L-BFGS-B') 
+    aa=op.minimize(g,[1.5,0.45],bounds=[(1.01, 2),(0.1,1)],method='L-BFGS-B') 
+    ma=aa['fun']
+    p=aa['x'][1]
+    th=aa['x'][0]
+    return([p,th], ma)
 
 
 """this program returns the matrix required to plot the log-likelihood heat map"""
@@ -274,6 +189,51 @@ def matssint(sigma,p, X, y):
     coef1=4.45*(h1**2/k1+h2**2/k2+h3**2/k3)
     return(coef1,coef2,coef3)   
 
+
+
+def matssintsim(inc,p, X, y):
+    """
+    Parameters
+    ----------
+    sigma : FLOAT
+        value of the sigma parameter for which we want to calculate the J(p, sigma) matrix
+    p : FLOAT
+        value of the p parameter for which we want to calculate the (p, sigma) matrix
+    X : LIST
+        list containing the values of the points presents at the time the function under the integral is calculated, denoted X_s in Theorem 2
+    y : LIST
+        point y of Theorem 2
+
+    Returns
+    -------
+    coef1 : FLOAT
+        value of the coefficient (1,1) of the matrix which is under the integral in Theorem 2 calculates for X_s=X and y=y
+    coef1 : FLOAT
+        value of coefficients (1,2) and (2,1) (it's the same since J is symetric) of the matrix which is under the integral in Theorem 2 calculates for X_s=X and y=y
+    coef3 : FLOAT
+        value of the coefficient (2,2) of the matrix which is under the integral in Theorem 2 calculates for X_s=X and y=y
+    """
+    ros=0
+    vio=0
+    for i in range(len(X)//4):
+        v=np.linalg.norm([X[4*i]-y[0],X[4*i+1]-y[1]])**2
+        #print(v)
+        ros+=((v/(np.log(inc)**2))-2)*np.exp(-v/(2*np.log(inc)**2))
+        #print(num)
+        vio+= np.exp(-v/(2*np.log(inc)**2))
+        #print(den)
+    #print((num**2)/den)
+    f=p/((len(X)//4)*2*np.pi*np.log(inc)**3)
+    g=1/((len(X)//4)*2*np.pi*np.log(inc)**2)
+    h=vio*g-1/Airecell
+    k=p*h+1/Airecell
+    coef3=(f*ros)**2/k
+    coef2=f*ros*h/k
+    coef1=h**2/k
+    return(simulation.beta(X)*coef1,simulation.beta(X)*coef2,simulation.beta(X)*coef3)
+
+
+
 """using the previous program, this program calculates the value of the matrix J(p, sigma)
 using a rectangular method in dimension 2, i.e. integrating the function 
 under the integral, taking it to be constant over small rectangles"""
@@ -306,12 +266,56 @@ def matcovarempfin(pmax, smax,resfinal):
         print(k)
         for i in range(1,len(xa)):
             for j in range(1,len(xo)):
-                if beincell([(xa[i]+xa[i-1])/2,(xo[j]+xo[j-1])/2])*True :
+                if heat_map_with_ellipse.beincell([(xa[i]+xa[i-1])/2,(xo[j]+xo[j-1])/2])*True :
                     r= matssint(smax,pmax,resfinal[k],[(xa[i]+xa[i-1])/2,(xo[j]+xo[j-1])/2])
                     coef1+=r[0]*(xa[i]-xa[i-1])*(xo[j]-xo[j-1])*intertps
                     coef2+=r[1]*(xa[i]-xa[i-1])*(xo[j]-xo[j-1])*intertps
                     coef3+=r[2]*(xa[i]-xa[i-1])*(xo[j]-xo[j-1])*intertps
     return(coef1,coef2,coef3)
+
+
+def matcovarempfinsim(pmax, smax,resfinal):
+    """
+    Parameters
+    ----------
+    pmax : FLOAT
+        value of the p parameter for which we want to calculate the J(p, sigma) matrix (normally the likelihood argmax)
+    smax : FLOAT
+        value of the sigma parameter for which we want to calculate the (p, sigma) matrix (normally the likelihood argmax)
+    resfinal : LIST
+        list containing the values of the points presents during the time the integral is calculated, denoted X_s in Theorem 2
+
+    Returns
+    -------
+    coef1 : FLOAT
+        value of the coefficient (1,1) of the matrix J(p, sigma)
+    coef1 : FLOAT
+        value of coefficients (1,2) and (2,1) (it's the same since J is symetric) of the matrix J(p, sigma)
+    coef3 : FLOAT
+        value of the coefficient (2,2) of the matrix J(p, sigma)
+    """
+    xa = np.linspace(-10, 10, 10)
+    xo = np.linspace(-10, 10, 10)
+    coef1=0
+    coef2=0
+    coef3=0
+    for k in range(len(resfinal)):
+        #print(k)
+        for i in range(1,len(xa)):
+            for j in range(1,len(xo)):
+                if simulation.beincell([(xa[i]+xa[i-1])/2,(xo[j]+xo[j-1])/2])*True :
+                    r= matssintsim(smax,pmax,resfinal[k],[(xa[i]+xa[i-1])/2,(xo[j]+xo[j-1])/2])
+                    coef1+=r[0]*(xa[i]-xa[i-1])*(xo[j]-xo[j-1])*intertps
+                    coef2+=r[1]*(xa[i]-xa[i-1])*(xo[j]-xo[j-1])*intertps
+                    coef3+=r[2]*(xa[i]-xa[i-1])*(xo[j]-xo[j-1])*intertps
+    return(coef1,coef2,coef3)
+
+
+
+
+
+
+
 
 
 """this program can be used to draw an ellipse on a graph"""
@@ -351,34 +355,12 @@ def plot_confidence_ellipse(mu, cov, alph, ax, clabel=None, label_bg='white', **
     return ax.add_patch(level_line)
 
 
-"""IInstructions for displaying graphics"""
 
-(drnx, dravtnx, resfinalrab)=extract_real_data()
 
-p = np.linspace(0, 0.2, 50)
-t = np.linspace(1.1, 10, 50)
-P, T = np.meshgrid(p, t)
-Z=logvrsdim2(P,T, dravtnx, drnx)
 
-#to calculate the argmax of log-likelihood 
-[pmax,smax]=maxvrs(dravtnx, drnx)
 
-#to calculate the matrix J(pmax,smax)
-a=matcovarempfin(pmax, smax,resfinalrab)
 
-#to plot the log-likelihood heat map
-fig, ax = plt.subplots()
-ax.set_title('heat map of the log-likelihood')
-pc = ax.pcolormesh(P, T, Z, cmap='jet', shading='gouraud',vmin=-1682, vmax = -1675)
-fig.colorbar(pc)
-plt.show()
 
-#to plot the log-likelihood heat map and overlay in black the estimated 95% confidence ellipse, centered at the maximum likelihood,
-fig, ax = plt.subplots()
-pc = ax.pcolormesh(P, T, Z,vmin=-7930, vmax = -7888, cmap='jet',shading="gouraud")
-fig.colorbar(pc)
-cov=np.array([[a[0],a[1]],[a[1],a[2]]])
-invcov=np.linalg.inv(cov)
-plot_confidence_ellipse([pmax, smax],invcov,0.95,ax,edgecolor='black', fill=0)
-plt.show()
+
+
 

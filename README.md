@@ -1,9 +1,9 @@
 # Parametric-estimation-of-the-BDMM-process 
 
-These codes and data are part of the supporting information of the article "Parametric estimation and LAN property of the birth-death-move process with mutations".
+These codes and data are part of the supporting information of the article "Parametric estimation and LAN property of the birth-death-move process with mutations", https://arxiv.org/pdf/2404.19367
 
-- ''Code'' contains the Python functions to simulate a BDM process. These programs are needed to run the example in ''An-example-of-simulation''.
+- ''Code'' contains the Python functions to simulate a BDMM process, to use MLE to estimate the parameters of the birth kernel, as parameterised in the article and to represent the likelihood function and the asymptotic covariance matrix for a simulation. These programs are needed to run the programs in ''An-example-of-simulation'' and in "Real-dataset".
 
-- ''An-example-of-simulation'' folder contains the programmes to simulate a simple BDMM process, where the particles move inside the square [-10,10]x[-10,10], each either a Brownian motion, a subdhiffusive motion or a superdiffusif motion without boundary conditions, and where the birth and mutation jumps occurs at a uniform rate, and death intensity is proportional to the number of particles. This folder also contains the results of 500 independent simulations used to display the figure in the article.
+- ''An-example-of-simulation'' folder contains the programs to simulate a simple BDMM process and the results of 500 independent simulations. It also contains the instructions needed to use the programs of "Code" folder in order to calculate the maximum likelihood of each simulation and display Figure 2 in the article.
 
-- ''Real-dataset'' contains two folders, one with the real dataset presented in the article and the other one with the programs witch allow to draw the log-likelihood heat map of this real dataset.
+- ''Data'' contains two folders, one with the real dataset presented in the article and the other one with the programs which allow to draw the log-likelihood heat map of this real dataset.
