@@ -6,4 +6,4 @@ In this folder, you find 3 Python files:
 
 - ''draw.py'' contains several functions that take in argument the output of the function “proctotal” (see above), in order to plot the generated trajectories, or the histograms of their size,  or the boxplots of the number of particles per frame, or to show a movie of the simulated process. These programs are needed to run the example in ''../An-example-of-simulation''.
 
-- estimation.py'' contains the functions used by MLE to estimate the parameters of the birth kernel, as parameterised in the article.
+- estimation.py'' contains the functions needed to compute the log-likelihood of the birth kernel, as parameterised in the article, and deduce the MLE and its associated covariance matrix. 
