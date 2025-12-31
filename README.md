@@ -1,9 +1,21 @@
-# Parametric-estimation-of-the-BDMM-process 
+# Parametric estimation of the BDMM process 
 
-These codes and data are part of the supporting information of the article "Parametric estimation and LAN property of the birth-death-move process with mutations", https://arxiv.org/pdf/2404.19367
+These codes and data are part of the supporting information of the article "Parametric estimation and LAN property of the birth-death-move process with mutations", available at https://arxiv.org/pdf/2404.19367
 
-- ''Code'' contains the Python functions to simulate a BDMM process, to compute the log-likelihood of the birth kernel, as parameterised in the article, deduce its maximum and the associated covariance matrix. These programs are needed to run the programs in ''An-example-of-simulation'' and in "Data".
 
-- ''An-example-of-simulation'' contains the codes to simulate a simple BDMM process and the results of 500 independent simulations. It also contains the instructions needed to use the programs of "Code" in order to calculate the maximum likelihood of each simulation and to display Figure 2 in the article.
+- `Synthetic_data_analysis.py` is the main Python script for analyzing the simulated data contained in the `Synthetic_data` folder, as described in Section 4.1 of the article.
 
-- ''Data'' contains two folders, one with some characteristics of the dataset used in the article, and the other one with the Python instructions to represent the log-likelihood heat map of this real dataset, along with the confidence ellipsoid centered at the maximum. 
+
+- `Data_analysis.py` is the main Python script for analyzing the real data provided in the `Data` folder, following the methodology presented in Section 4.2 of the article. 
+
+
+- `Simulations.py` is the main Python script for simulating a synthetic trajectory, as those provided in the  `Synthetic_data` folder. 
+
+
+
+- The `Codes` folder contains the Python programs needed to run the main scripts. 
+
+- The `Synthetic_data` folder contains 500 independent simulations of the BDMM process, generated using the script `Simulations.py` and analyzed by the script `Synthetic_data_analysis.py`.
+
+- The `Data` folder contains the real data analysed in the article, using the  script `Data_analysis.py`.  
+

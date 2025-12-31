@@ -1,9 +1,0 @@
-# Code
-
-In this folder, you find 3 Python files:
-
-- ''process.py'' gathers all Python functions necessary to generate a BDMM process. The main function, named ''proctotal’’, takes in argument all the characteristics of the process (final time of simulation, move, intensities of births, of deaths and of transformations, transition probabilities for the births, for the deaths and for the transformations) and returns the coordinates of the generated particles at each time of the simulation (over a fine temporal grid). These programs are needed to run the example in ''../An-example-of-simulation''.  
-
-- ''draw.py'' contains several functions that take in argument the output of the function “proctotal” (see above), in order to plot the generated trajectories, or the histograms of their size,  or the boxplots of the number of particles per frame, or to show a movie of the simulated process. These programs are needed to run the example in ''../An-example-of-simulation''.
-
-- estimation.py'' contains the functions needed to compute the log-likelihood of the birth kernel, as parameterised in the article, and deduce the MLE and its associated covariance matrix. 
