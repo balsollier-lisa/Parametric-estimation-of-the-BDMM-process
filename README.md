@@ -9,7 +9,7 @@ These codes and data are part of the supporting information of the article "Para
 - `Data_analysis.py` is the main Python script for analyzing the real data provided in the `Data` folder, following the methodology presented in Section 4.2 of the article. 
 
 
-- `Simulations.py` is the main Python script for simulating a synthetic trajectory, as those provided in the  `Synthetic_data` folder. 
+- `Simulations.py` is the main Python script for simulating a BDMM process, as the realisations provided in the  `Synthetic_data` folder. 
 
 
 
