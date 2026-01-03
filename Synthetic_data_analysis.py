@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import numpy as np
 import pickle
 import importlib
 from Codes import estimation_functions as estimation
@@ -159,3 +161,4 @@ for i in range(len(pvec)):
   d2=diff @ invcov @ diff.T
   coverage+=[d2 <= c]
 np.mean(coverage) #0.96 
+
